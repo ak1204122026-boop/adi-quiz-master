@@ -1,0 +1,441 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#090d1b">
+<title>Adi Quiz Master | ADITECH STUDIO</title>
+<style>
+:root {
+  --bg:#090d1b; --panel:#131b30; --text:#f4f7ff;
+  --muted:#9ba9c5; --accent:#5cf2d6; --border:#273451;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; background:radial-gradient(ellipse at top,#172447,var(--bg) 65%);
+  color:var(--text); font-family:system-ui,Arial,sans-serif;
+  min-height:100vh;
+}
+button { font:inherit; cursor:pointer; }
+button:focus-visible { outline:3px solid white; outline-offset:3px; }
+header {
+  position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;
+  align-items:center;gap:10px;padding:14px 16px;
+  background:#090d1beF;border-bottom:1px solid var(--border);backdrop-filter:blur(14px);
+}
+.logo {font-weight:900;letter-spacing:.4px}
+.logo span {color:var(--accent)}
+.small {font-size:12px;color:var(--muted)}
+main {width:min(100%,850px);margin:auto;padding:22px 15px 45px}
+h1 {font-size:clamp(27px,7vw,42px);line-height:1.12;margin:12px 0}
+p {line-height:1.55}
+.muted {color:var(--muted)}
+.panel {background:#131b30dd;border:1px solid var(--border);border-radius:22px;padding:18px;margin-top:17px}
+.grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.subject {
+  min-height:130px;text-align:left;padding:16px;border:1px solid var(--border);
+  border-radius:20px;background:linear-gradient(145deg,#1d2b4a,#10172a);color:white;
+  transition:transform .15s,border-color .15s;
+}
+.subject:active,.level:active,.answer:active {transform:scale(.98)}
+.subject .emoji {font-size:29px}
+.subject strong {display:block;font-size:17px;margin:8px 0 4px}
+.subject.science {--tone:#61a8ff}
+.subject.math {--tone:#c49aff}
+.subject.gk {--tone:#ffbf69}
+.subject.english {--tone:#ff83b8}
+.subject.computer {--tone:#5cf2d6}
+.subject {border-top:3px solid var(--tone,#5cf2d6)}
+.progress-track {height:8px;border-radius:20px;background:#28334b;overflow:hidden;margin-top:10px}
+.progress-fill {height:100%;width:0;background:linear-gradient(90deg,#5cf2d6,#628bff)}
+.level-grid {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:18px}
+.level {
+  min-height:83px;border:1px solid var(--border);border-radius:15px;
+  background:#111a2e;color:white;padding:9px 3px;font-size:14px;
+}
+.level strong {display:block;font-size:20px;margin-bottom:5px}
+.level.done {border-color:#46d9a0;background:#10332f}
+.level.locked {opacity:.38;cursor:not-allowed}
+.badge {font-size:10px;color:#73f0b9;display:block;margin-top:3px}
+.topline {display:flex;justify-content:space-between;gap:12px;align-items:center}
+.back,.secondary {
+  border:1px solid var(--border);background:#17233b;color:white;
+  border-radius:12px;padding:11px 14px;
+}
+.primary {
+  width:100%;padding:15px;border:0;border-radius:14px;
+  background:linear-gradient(100deg,#5cf2d6,#71a2ff);
+  color:#07111e;font-weight:850;margin-top:15px;
+}
+.question {font-size:clamp(21px,5.5vw,29px);line-height:1.35;margin:22px 0}
+.answers {display:grid;gap:11px}
+.answer {
+  width:100%;text-align:left;display:flex;gap:12px;align-items:center;
+  padding:15px;border-radius:15px;border:1px solid var(--border);
+  background:#17223a;color:white;min-height:57px;
+}
+.letter {
+  display:grid;place-items:center;flex-shrink:0;width:31px;height:31px;
+  border-radius:9px;background:#273652;font-weight:800;
+}
+.answer.correct {border-color:#4ce2a0;background:#12372f}
+.answer.wrong {border-color:#ff778c;background:#3b1c2a}
+.answer:disabled {cursor:default}
+#feedback {line-height:1.5;margin-top:14px;color:var(--muted)}
+.hidden {display:none!important}
+.footer {text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
+.statrow {display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.stat {flex:1;min-width:90px;background:#0d1426;border-radius:13px;padding:13px}
+.stat strong {display:block;font-size:22px}
+@media(min-width:600px) {
+ main {padding-top:32px}
+ .grid {grid-template-columns:repeat(3,minmax(0,1fr))}
+ .level-grid {grid-template-columns:repeat(5,minmax(0,1fr))}
+ .panel {padding:24px}
+}
+@media(max-width:360px) {
+ header {padding:12px}
+ main {padding-left:11px;padding-right:11px}
+ .grid {gap:8px}
+ .subject {padding:12px;min-height:120px}
+ .level-grid {gap:7px}
+ .level {min-height:76px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">ADI<span> QUIZ</span> MASTER</div>
+  <div class="small">ADITECH STUDIO</div>
+</header>
+<main>
+  <section id="home">
+    <div class="small">YOUR PERSONAL QUIZ UNIVERSE</div>
+    <h1>Learn. Play.<br><span style="color:var(--accent)">Level Up.</span></h1>
+    <p class="muted">Choose your subject and complete all 10 levels.</p>
+    <div class="panel">
+      <div class="topline"><strong>Your overall progress</strong><span id="overallText">0 / 50</span></div>
+      <div class="progress-track"><div id="overallBar" class="progress-fill"></div></div>
+    </div>
+    <h2>Choose your universe</h2>
+    <div id="subjects" class="grid"></div>
+  </section>
+
+  <section id="levels" class="hidden">
+    <div class="topline">
+      <button class="back" onclick="showHome()">← Home</button>
+      <span id="subjectLabel" class="small"></span>
+    </div>
+    <h1 id="levelTitle">Choose a level</h1>
+    <p id="levelDescription" class="muted">Complete each level to unlock the next.</p>
+    <div class="panel">
+      <div class="topline"><strong>Category progress</strong><span id="categoryText">0 / 10</span></div>
+      <div class="progress-track"><div id="categoryBar" class="progress-fill"></div></div>
+      <div id="levelGrid" class="level-grid"></div>
+    </div>
+  </section>
+
+  <section id="quiz" class="hidden">
+    <div class="topline">
+      <button class="back" onclick="showLevels()">← Levels</button>
+      <span id="quizMeta" class="small"></span>
+    </div>
+    <div class="panel">
+      <div class="topline"><span id="questionNumber" class="small"></span><strong id="scoreText">Score: 0</strong></div>
+      <div class="progress-track"><div id="questionBar" class="progress-fill"></div></div>
+      <h2 id="questionText" class="question"></h2>
+      <div id="answers" class="answers"></div>
+      <div id="feedback" aria-live="polite"></div>
+      <button id="nextButton" class="primary hidden" onclick="nextQuestion()">Next question →</button>
+    </div>
+  </section>
+
+  <section id="result" class="hidden">
+    <div class="topline"><button class="back" onclick="showLevels()">← Levels</button></div>
+    <div class="panel" style="text-align:center">
+      <div style="font-size:52px">🏆</div>
+      <h1 id="resultTitle">Level completed!</h1>
+      <p id="resultMessage" class="muted"></p>
+      <div class="statrow">
+        <div class="stat"><strong id="resultScore">0/20</strong><span class="small">Score</span></div>
+        <div class="stat"><strong id="resultPercent">0%</strong><span class="small">Accuracy</span></div>
+      </div>
+      <p id="resultBadge"></p>
+      <button id="resultNext" class="primary" onclick="continueAfterResult()">Continue →</button>
+      <button class="secondary" style="width:100%;margin-top:10px" onclick="showLevels()">Back to levels</button>
+    </div>
+  </section>
+  <div class="footer">MADE WITH FOCUS · ADITECH STUDIO</div>
+</main>
+<script>
+const subjects = [
+ {id:"Science",name:"Science",emoji:"⚛️",theme:"science",desc:"Discover how the world works"},
+ {id:"Maths",name:"Maths",emoji:"∑",theme:"math",desc:"Solve and sharpen your logic"},
+ {id:"GK",name:"General Knowledge",emoji:"🌍",theme:"gk",desc:"Explore the world around you"},
+ {id:"English",name:"English",emoji:"📚",theme:"english",desc:"Words, grammar and vocabulary"},
+ {id:"Computer",name:"Computer",emoji:"💻",theme:"computer",desc:"Explore the digital universe"}
+];
+
+// 20 manually written starter questions per category.
+// These are reused across levels for this starter version.
+const bank = {
+Science:[
+["Which planet is called the Red Planet?","Venus","Mars","Jupiter","Mercury",1,"Mars appears reddish because of iron-rich dust."],
+["Which gas do plants absorb during photosynthesis?","Oxygen","Nitrogen","Carbon dioxide","Hydrogen",2,"Plants use carbon dioxide to make food."],
+["What is the boiling point of water at sea level?","50°C","100°C","150°C","200°C",1,"Pure water boils at about 100°C at standard pressure."],
+["Which organ pumps blood around the body?","Lungs","Brain","Heart","Kidneys",2,"The heart pumps blood through blood vessels."],
+["What force pulls objects toward Earth?","Friction","Gravity","Magnetism","Electricity",1,"Gravity attracts objects with mass."],
+["Which is the natural source of light for Earth?","Moon","Sun","Mars","Clouds",1,"The Sun produces its own light."],
+["Which state of matter has a fixed shape?","Gas","Liquid","Solid","Vapour",2,"A solid generally keeps its shape."],
+["What is the main gas in Earth's atmosphere?","Oxygen","Nitrogen","Carbon dioxide","Hydrogen",1,"Nitrogen makes up about 78% of dry air."],
+["Which part of a plant absorbs most water?","Flower","Root","Fruit","Leaf",1,"Roots absorb water and minerals from soil."],
+["What is the SI unit of force?","Joule","Watt","Newton","Metre",2,"Force is measured in newtons."],
+["Which vitamin can the body make with sunlight exposure?","Vitamin A","Vitamin B12","Vitamin C","Vitamin D",3,"Sunlight helps the skin produce vitamin D."],
+["What is the centre of an atom called?","Nucleus","Cell wall","Core shell","Membrane",0,"An atom's nucleus contains protons and neutrons."],
+["Which animal is a mammal?","Frog","Dolphin","Crocodile","Trout","1","Dolphins breathe air and nurse their young."],
+["What do we call animals that eat only plants?","Carnivores","Omnivores","Herbivores","Decomposers",2,"Herbivores feed on plants."],
+["Which instrument measures temperature?","Barometer","Thermometer","Compass","Ammeter",1,"A thermometer measures temperature."],
+["Which part of the cell contains genetic material?","Nucleus","Cell membrane","Cytoplasm only","Cell wall",0,"The nucleus contains most of a cell's DNA."],
+["What is water's chemical formula?","CO2","O2","H2O","NaCl",2,"A water molecule contains two hydrogen atoms and one oxygen atom."],
+["Which material is attracted to a magnet?","Wood","Plastic","Iron","Paper",2,"Iron is a magnetic material."],
+["Which energy source is renewable?","Coal","Petrol","Solar energy","Natural gas",2,"Sunlight is naturally replenished."],
+["Which body system helps us breathe?","Digestive","Respiratory","Skeletal","Nervous",1,"The respiratory system exchanges oxygen and carbon dioxide."]
+],
+Maths:[
+["What is 12 × 8?","86","96","108","88",1,"12 × 8 = 96."],
+["What is the square of 9?","18","72","81","99",2,"9 × 9 = 81."],
+["What is 144 ÷ 12?","10","11","12","14",2,"144 divided by 12 equals 12."],
+["What is 3/4 as a decimal?","0.25","0.5","0.75","1.25",2,"3 divided by 4 is 0.75."],
+["Solve: x + 7 = 15.","6","7","8","9",2,"Subtract 7 from both sides: x = 8."],
+["What is the perimeter of a square with side 5 cm?","10 cm","15 cm","20 cm","25 cm",2,"Perimeter = 4 × side = 20 cm."],
+["What is 25% of 200?","25","40","50","75",2,"One quarter of 200 is 50."],
+["What is the cube of 3?","9","18","27","36",2,"3 × 3 × 3 = 27."],
+["How many degrees are in a right angle?","45°","90°","180°","360°",1,"A right angle measures 90 degrees."],
+["What is the HCF of 12 and 18?","2","3","6","9",2,"The greatest common factor is 6."],
+["What is 7² − 5²?","12","24","14","49",0,"49 − 25 = 24. Wait: the correct option is 24."],
+["Simplify 2/6.","1/2","1/3","2/3","3/2",1,"Divide numerator and denominator by 2."],
+["What is 0.5 + 0.25?","0.3","0.65","0.75","1.25",2,"0.50 + 0.25 = 0.75."],
+["How many sides does a hexagon have?","5","6","7","8",1,"A hexagon has six sides."],
+["What is the mean of 2, 4 and 6?","3","4","5","6",1,"(2 + 4 + 6) ÷ 3 = 4."],
+["What is 15% of 100?","5","10","15","20",2,"15% of 100 is 15."],
+["If a = 4, what is 3a?","7","8","12","16",2,"3 × 4 = 12."],
+["What is the smallest prime number?","0","1","2","3",2,"2 is the smallest prime number."],
+["What is 1 kilometre in metres?","100","500","1000","10000",2,"1 km equals 1000 metres."],
+["What is the area of a rectangle 6 cm by 4 cm?","10 cm²","20 cm²","24 cm²","28 cm²",2,"Area = length × width = 24 cm²."]
+],
+GK:[
+["What is the capital of India?","Mumbai","New Delhi","Jaipur","Kolkata",1,"New Delhi is India's capital."],
+["Which is the largest ocean?","Indian","Arctic","Atlantic","Pacific",3,"The Pacific is the largest ocean."],
+["How many days are there in a leap year?","364","365","366","367",2,"A leap year has 366 days."],
+["Which planet is the largest in our solar system?","Earth","Saturn","Jupiter","Mars",2,"Jupiter is the largest planet."],
+["What is India's national animal?","Lion","Tiger","Elephant","Peacock",1,"The Bengal tiger is India's national animal."],
+["Which is the highest mountain above sea level?","K2","Kangchenjunga","Mount Everest","Nanda Devi",2,"Mount Everest is the highest above sea level."],
+["Which currency is used in Japan?","Yuan","Won","Yen","Rupee",2,"Japan's currency is the yen."],
+["How many colours are traditionally named in a rainbow?","5","6","7","8",2,"Seven colours are traditionally identified."],
+["Which is the largest continent by area?","Africa","Asia","Europe","Australia",1,"Asia is the largest continent."],
+["Which festival is known as the festival of lights in India?","Holi","Diwali","Eid","Baisakhi",1,"Diwali is widely known as the festival of lights."],
+["What is the national bird of India?","Parrot","Peacock","Eagle","Swan",1,"The Indian peacock is the national bird."],
+["Which is the smallest continent by area?","Europe","Antarctica","Australia","South America",2,"Australia is the smallest continent by area."],
+["How many players are on the field for one cricket team?","9","10","11","12",2,"A cricket team fields 11 players."],
+["Which gas do humans need to breathe?","Oxygen","Helium","Methane","Neon",0,"Humans use oxygen for cellular respiration."],
+["Which Indian city is famous for the Taj Mahal?","Agra","Bhopal","Surat","Patna",0,"The Taj Mahal is in Agra."],
+["Which is India's national flower?","Rose","Lotus","Sunflower","Jasmine",1,"The lotus is India's national flower."],
+["Which direction does the Sun appear to rise from?","North","South","East","West",2,"Earth's rotation makes the Sun appear to rise in the east."],
+["How many months have 31 days?","4","5","7","8",2,"Seven months have 31 days."],
+["Which is the nearest star to Earth?","Sirius","Sun","Polaris","Vega",1,"The Sun is Earth's nearest star."],
+["Which organisation is associated with the United Nations acronym UNICEF?","Children's welfare","World trade","Space research","Football",0,"UNICEF works for children's rights and welfare."]
+],
+English:[
+["Choose the plural of 'child'.","Childs","Children","Childes","Childrens",1,"The plural form is children."],
+["Choose the opposite of 'ancient'.","Old","Historic","Modern","Early",2,"Modern is an antonym of ancient."],
+["Choose the correct spelling.","Beautifull","Beautiful","Beutiful","Beautifal",1,"Beautiful is the correct spelling."],
+["Which word is a noun?","Quickly","Happiness","Run","Blue",1,"Happiness names a state or quality."],
+["Choose the past tense of 'go'.","Goed","Gone","Went","Going",2,"The simple past of go is went."],
+["Fill in: She ___ reading a book.","are","am","is","be",2,"Use is with the singular subject she."],
+["Choose a synonym of 'happy'.","Joyful","Angry","Tired","Afraid",0,"Joyful means happy."],
+["Which article fits: ___ apple?","A","An","The only","No article ever",1,"An is used before this vowel sound."],
+["Identify the adjective: 'The tall tree fell.'","The","tall","tree","fell",1,"Tall describes the tree."],
+["What is the opposite of 'brave'?","Bold","Strong","Cowardly","Fearless",2,"Cowardly is an antonym of brave."],
+["Choose the correct sentence.","He go to school.","He goes to school.","He going school.","He gone school.",1,"A singular third-person subject takes goes."],
+["What is the plural of 'mouse'?","Mouses","Mice","Mices","Mouse",1,"The usual plural is mice."],
+["Which word is a pronoun?","Riya","They","School","Beautiful",1,"They can replace a noun phrase."],
+["Choose the past tense of 'write'.","Writed","Written","Wrote","Writing",2,"The simple past is wrote."],
+["Which punctuation ends a direct question?","Comma","Full stop","Question mark","Colon",2,"A direct question ends with a question mark."],
+["Choose a synonym of 'begin'.","Finish","Start","Close","Stop",1,"Start means begin."],
+["Which word is an adverb?","Slowly","Slow","Slowness","Slower",0,"Slowly describes how an action happens."],
+["Fill in: They ___ playing outside.","is","am","are","was",2,"Use are with the subject they."],
+["What is the opposite of 'generous'?","Kind","Selfish","Helpful","Giving",1,"Selfish is an antonym of generous."],
+["Which is a complete sentence?","Because it rained","The little dog","Birds can fly.","Running quickly",2,"Birds can fly expresses a complete thought."]
+],
+Computer:[
+["What does CPU stand for?","Central Processing Unit","Computer Personal Unit","Central Program Utility","Core Power User",0,"CPU stands for Central Processing Unit."],
+["Which device is used to type text?","Monitor","Keyboard","Speaker","Printer",1,"A keyboard is an input device."],
+["Which of these is an operating system?","Windows","HTML","USB","Wi-Fi",0,"Windows is an operating system."],
+["What does URL identify?","A web address","A keyboard key","A file size","A battery type",0,"URL stands for Uniform Resource Locator."],
+["Which device displays visual output?","Mouse","Scanner","Monitor","Microphone",2,"A monitor displays visual output."],
+["Which is a web browser?","Chrome","Excel","Paint","Calculator",0,"Chrome is a web browser."],
+["What does RAM provide?","Temporary working memory","Permanent paper storage","Internet access by itself","Sound output",0,"RAM stores data used by running programs temporarily."],
+["Which is an input device?","Printer","Monitor","Mouse","Projector",2,"A mouse sends user input to a computer."],
+["What does Wi-Fi allow devices to do?","Connect wirelessly to a network","Print without electricity","Increase screen size","Replace the CPU",0,"Wi-Fi is a wireless networking technology."],
+["Which file extension is commonly used for a webpage?","html","mp3","jpg","exe only",0,"HTML files commonly use the .html extension."],
+["What does USB commonly help connect?","Devices and accessories","Only websites","Only speakers","Only batteries",0,"USB connects peripherals and transfers data and power."],
+["Which is a strong password practice?","Use your name only","Reuse every password","Use a unique long password","Share it with friends",2,"Unique, long passwords are harder to guess."],
+["What is software?","Computer programs","A monitor cable","A plastic keyboard","A power socket",0,"Software consists of programs and related instructions."],
+["Which key usually starts a new line while typing?","Shift","Enter","Caps Lock","Esc",1,"Enter typically starts a new line in text editors."],
+["What does AI stand for?","Automated Internet","Artificial Intelligence","Advanced Input","Active Interface",1,"AI stands for Artificial Intelligence."],
+["Which unit is commonly used for digital file size?","Kilogram","Kilobyte","Kilometre","Kilowatt",1,"A kilobyte is a digital information unit."],
+["What should you do with a suspicious email link?","Click immediately","Share your password","Verify it before opening","Send it to everyone",2,"Verify suspicious links and senders before interacting."],
+["Which is a search engine?","Google","Windows","Bluetooth","PowerPoint",0,"Google provides a search engine."],
+["What does Ctrl+C commonly do?","Paste","Copy","Cut","Undo",1,"Ctrl+C is the common copy shortcut."],
+["What is cloud storage?","Saving files on remote servers","A physical folder only","A screen brightness setting","A type of keyboard",0,"Cloud storage keeps files on remotely hosted systems."]
+]
+};
+
+// Correct a starter-bank indexing typo before play.
+bank.Science[12][5] = 1;
+bank.Maths[10][5] = 1;
+
+const TOTAL_LEVELS = 10;
+const QUESTIONS_PER_LEVEL = 20;
+let category = null, level = 1, questions = [], index = 0, score = 0, locked = false;
+let lastResult = null;
+const $ = id => document.getElementById(id);
+const storageKey = "adiQuizMasterMobileProgressV1";
+let progress = {};
+try { progress = JSON.parse(localStorage.getItem(storageKey) || "{}") || {}; }
+catch { progress = {}; }
+
+function saveProgress() {
+  try { localStorage.setItem(storageKey, JSON.stringify(progress)); }
+  catch { /* The quiz remains playable if storage is unavailable. */ }
+}
+function completed(id) { return progress[id] || []; }
+function unlockedCount(id) { return Math.min(TOTAL_LEVELS, completed(id).length + 1); }
+function showOnly(id) {
+  ["home","levels","quiz","result"].forEach(s => $(s).classList.toggle("hidden", s !== id));
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function showHome() {
+  category = null; renderSubjects(); showOnly("home");
+}
+function renderSubjects() {
+  $("subjects").innerHTML = "";
+  let totalDone = 0;
+  subjects.forEach(s => {
+    const done = completed(s.id).length; totalDone += done;
+    const b = document.createElement("button");
+    b.className = "subject " + s.theme;
+    b.innerHTML = `<span class="emoji">${s.emoji}</span><strong>${s.name}</strong><span class="small">${s.desc}</span><div class="progress-track"><div class="progress-fill" style="width:${done*10}%"></div></div><span class="small">${done}/10 levels completed</span>`;
+    b.onclick = () => openCategory(s.id);
+    $("subjects").appendChild(b);
+  });
+  $("overallText").textContent = `${totalDone} / 50`;
+  $("overallBar").style.width = `${totalDone/50*100}%`;
+}
+function openCategory(id) {
+  category = id;
+  const s = subjects.find(x => x.id === id);
+  $("subjectLabel").textContent = s.name.toUpperCase();
+  $("levelTitle").textContent = s.name + " Levels";
+  $("levelDescription").textContent = s.desc + ". Complete each level to unlock the next.";
+  renderLevels(); showOnly("levels");
+}
+function showLevels() {
+  if (!category) return showHome();
+  renderLevels(); showOnly("levels");
+}
+function renderLevels() {
+  const done = completed(category);
+  $("categoryText").textContent = `${done.length} / ${TOTAL_LEVELS}`;
+  $("categoryBar").style.width = `${done.length/TOTAL_LEVELS*100}%`;
+  $("levelGrid").innerHTML = "";
+  for(let n=1;n<=TOTAL_LEVELS;n++) {
+    const isDone = done.includes(n), unlocked = n <= unlockedCount(category);
+    const b = document.createElement("button");
+    b.className = "level" + (isDone?" done":"") + (!unlocked?" locked":"");
+    b.innerHTML = `<strong>${isDone?"✓":unlocked?n:"🔒"}</strong>${isDone?'<span class="badge">COMPLETED</span>':unlocked?"LEVEL":"LOCKED"}`;
+    b.disabled = !unlocked;
+    b.onclick = () => startLevel(n);
+    $("levelGrid").appendChild(b);
+  }
+  if(done.length===TOTAL_LEVELS) $("levelDescription").textContent = "CATEGORY COMPLETED! All 10 levels finished.";
+}
+function startLevel(n) {
+  if(n>unlockedCount(category)) return;
+  level=n; index=0; score=0; locked=false;
+  const source=bank[category];
+  // Starter version reuses the category's 20-question bank in each level.
+  questions = source.map((q,i)=>({q:q[0],options:q.slice(1,5),answer:q[5],explain:q[6],original:i}));
+  // Shuffle question order, keeping each answer attached to its question.
+  for(let i=questions.length-1;i>0;i--) {
+    const j=Math.floor(Math.random()*(i+1));
+    [questions[i],questions[j]]=[questions[j],questions[i]];
+  }
+  $("quizMeta").textContent = `${category} · LEVEL ${level}`;
+  showOnly("quiz"); renderQuestion();
+}
+function renderQuestion() {
+  locked=false;
+  const q=questions[index];
+  $("questionNumber").textContent=`QUESTION ${index+1} / ${QUESTIONS_PER_LEVEL}`;
+  $("scoreText").textContent=`Score: ${score}`;
+  $("questionBar").style.width=`${index/QUESTIONS_PER_LEVEL*100}%`;
+  $("questionText").textContent=q.q;
+  $("answers").innerHTML="";
+  $("feedback").textContent="";
+  $("nextButton").classList.add("hidden");
+  q.options.forEach((opt,i)=>{
+    const b=document.createElement("button");
+    b.className="answer";
+    const letter=document.createElement("span"); letter.className="letter"; letter.textContent=String.fromCharCode(65+i);
+    const label=document.createElement("span"); label.textContent=opt;
+    b.append(letter,label); b.onclick=()=>chooseAnswer(i,b);
+    $("answers").appendChild(b);
+  });
+}
+function chooseAnswer(choice,button) {
+  if(locked) return;
+  locked=true;
+  const q=questions[index];
+  const buttons=[...$("answers").querySelectorAll("button")];
+  buttons.forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.answer) b.classList.add("correct");
+  });
+  if(choice===q.answer) score++;
+  else button.classList.add("wrong");
+  $("scoreText").textContent=`Score: ${score}`;
+  $("feedback").textContent=(choice===q.answer?"Correct! ":"Not quite. ")+q.explain;
+  $("nextButton").textContent=index===QUESTIONS_PER_LEVEL-1?"See results →":"Next question →";
+  $("nextButton").classList.remove("hidden");
+}
+function nextQuestion() {
+  if(!locked) return;
+  if(index<QUESTIONS_PER_LEVEL-1) { index++; renderQuestion(); }
+  else finishLevel();
+}
+function finishLevel() {
+  const done=completed(category);
+  if(!done.includes(level)) {
+    done.push(level); done.sort((a,b)=>a-b); progress[category]=done; saveProgress();
+  }
+  const percent=Math.round(score/QUESTIONS_PER_LEVEL*100);
+  lastResult={category,level,score,percent};
+  $("resultTitle").textContent=done.length===TOTAL_LEVELS?"CATEGORY COMPLETED!":"LEVEL COMPLETED!";
+  $("resultMessage").textContent=`You finished ${category} Level ${level}.`;
+  $("resultScore").textContent=`${score}/${QUESTIONS_PER_LEVEL}`;
+  $("resultPercent").textContent=`${percent}%`;
+  $("resultBadge").innerHTML=`<span class="badge" style="font-size:14px">✓ COMPLETED</span>`;
+  $("resultNext").textContent=level<TOTAL_LEVELS?"Continue to next level →":"Back to categories";
+  renderSubjects(); showOnly("result");
+}
+function continueAfterResult() {
+  if(!lastResult) return showHome();
+  if(lastResult.level<TOTAL_LEVELS) startLevel(lastResult.level+1);
+  else showHome();
+}
+renderSubjects();
+</script>
+</body>
+</html>
